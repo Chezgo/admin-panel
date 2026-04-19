@@ -8,31 +8,46 @@ const routes = [
     component: () => import('@/views/Callback.vue'), 
     meta: { requiresAuth: false } 
   },
-  { 
-    path: '/', 
-    redirect: '/telescope-parts' 
+  {
+  path: '/brands',
+  name: 'BrandList',
+  component: () => import('@/views/brands/BrandList.vue'),
+  meta: { title: 'Бренды деталей', requiresAuth: true }
   },
-  { 
-    path: '/telescope-parts', 
-    name: 'TelescopeParts', 
-    component: () => import('@/views/telescope-parts/TelescopePartsList.vue'), 
-    meta: { title: 'Панель управления', requiresAuth: true } 
+  {
+  path: '/brands/:id',
+  name: 'BrandDetail',
+  component: () => import('@/views/brands/BrandDetail.vue'),
+  meta: { title: 'Бренд', requiresAuth: true },
+  props: true
   },
-  { 
-    path: '/brands', 
-    name: 'Brands', 
-    component: () => import('@/views/brands/BrandList.vue'), 
-    meta: { title: 'Бренды деталей', requiresAuth: true } 
+  {
+  path: '/telescope-parts',
+  name: 'TelescopePartsList',
+  component: () => import('@/views/telescope-parts/TelescopePartsList.vue'),
+  meta: { title: 'Детали телескопа', requiresAuth: true }
   },
-  { 
-    path: '/types', 
-    name: 'PartTypes', 
-    component: () => import('@/views/types/PartTypeList.vue'), 
-    meta: { title: 'Типы деталей', requiresAuth: true } 
+  {
+  path: '/telescope-parts/:id',
+  name: 'TelescopePartDetail',
+  component: () => import('@/views/telescope-parts/TelescopePartDetail.vue'),
+  meta: { title: 'Деталь', requiresAuth: true },
+  props: true 
   },
-  // ⚠️ Временно закомментировано, пока не создадите файлы:
-  // { path: '/profiles', name: 'Profiles', component: () => import('@/views/profiles/ProfileList.vue'), meta: { title: 'Профили', requiresAuth: true } },
-  // { path: '/gallery', name: 'Gallery', component: () => import('@/views/gallery/GalleryList.vue'), meta: { title: 'Галерея', requiresAuth: true } },
+  {
+  path: '/types',
+  name: 'TypeDetailList',
+  component: () => import('@/views/types/TypeDetailList.vue'),
+  meta: { title: 'Типы деталей', requiresAuth: true }
+},
+{
+  path: '/types/:id',
+  name: 'TypeDetail',
+  component: () => import('@/views/types/TypeDetailDetail.vue'),
+  meta: { title: 'Тип детали', requiresAuth: true },
+  props: true
+},
+  
   
   { path: '/:pathMatch(.*)*', redirect: '/telescope-parts' }
 ];

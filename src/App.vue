@@ -48,8 +48,8 @@ onMounted(async () => {
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: #0b1120; /* Глубокий темно-синий */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: #0b1120;
   color: #cbd5e1;
   line-height: 1.6;
   overflow-x: hidden;
@@ -59,24 +59,6 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-}
-
-/* ===== Звездный фон для контента ===== */
-.main-content {
-  position: relative;
-  background-color: #0b1120;
-  background-image: 
-    radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
-    radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
-    radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px);
-  background-size: 550px 550px, 350px 350px, 250px 250px;
-  background-position: 0 0, 40px 60px, 130px 270px;
-  animation: starsMove 100s linear infinite;
-}
-
-@keyframes starsMove {
-  from { transform: translateY(0); }
-  to { transform: translateY(-1000px); }
 }
 
 .app-wrapper {
@@ -92,22 +74,44 @@ body {
 }
 
 .main-content {
+  position: relative;
+  background-color: #0b1120;
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
+  z-index: 1;
 }
 
-/* ===== Экраны загрузки ===== */
-.loading-screen {
+.main-content::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 3px),
+    radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 2px),
+    radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 3px);
+  background-size: 550px 550px, 350px 350px, 250px 250px;
+  background-position: 0 0, 40px 60px, 130px 270px;
+  animation: starsMove 100s linear infinite;
+  z-index: 0; /* Звёзды под контентом */
+  pointer-events: none; /* Чтобы клики проходили сквозь */
+}
+
+@keyframes starsMove {
+  from { background-position: 0 0, 40px 60px, 130px 270px; }
+  to { background-position: 0 1000px, 40px 1060px, 130px 1270px; }
+}
+
+.loading-screen,
+.auth-redirect {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  gap: 1.5rem;
+  gap: 1rem;
   background-color: #0b1120;
   color: #60a5fa;
-  font-size: 1.1rem;
 }
 
 .spinner {
@@ -124,7 +128,7 @@ body {
 /* ===== Анимации переходов ===== */
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
 .fade-enter-from,
 .fade-leave-to {
@@ -132,8 +136,9 @@ body {
   transform: translateY(10px);
 }
 
-/* ===== Утилиты ===== */
 .card {
+  position: relative;
+  z-index: 1; /* Карточки поверх звёзд */
   background: #111827;
   border: 1px solid rgba(59, 130, 246, 0.3);
   border-radius: 12px;
@@ -142,38 +147,9 @@ body {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
-.card-header {
-  padding: 1.25rem 1.5rem;
-  border-bottom: 1px solid rgba(59, 130, 246, 0.2);
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.card-icon {
-  width: 36px;
-  height: 36px;
-  background: rgba(59, 130, 246, 0.15);
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.1rem;
-}
-
-.card-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #e0e7ff;
-  text-shadow: 0 0 10px rgba(96, 165, 250, 0.3);
-}
-
-.card-body {
-  padding: 1.5rem;
-}
-
 .btn {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -186,6 +162,7 @@ body {
   transition: all 0.2s;
   font-weight: 500;
   font-size: 0.9rem;
+  text-decoration: none;
 }
 
 .btn:hover {
@@ -219,6 +196,8 @@ body {
 }
 
 h1, h2, h3 {
+  position: relative;
+  z-index: 1;
   color: #e0e7ff;
   text-shadow: 0 0 12px rgba(96, 165, 250, 0.4);
 }
@@ -228,6 +207,8 @@ h2 { font-size: 1.35rem; font-weight: 600; margin-bottom: 0.75rem; }
 h3 { font-size: 1.1rem; font-weight: 600; }
 
 .page-header {
+  position: relative;
+  z-index: 1;
   margin-bottom: 2rem;
 }
 
@@ -237,7 +218,6 @@ h3 { font-size: 1.1rem; font-weight: 600; }
   margin-top: 0.25rem;
 }
 
-/* Скроллбар */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;

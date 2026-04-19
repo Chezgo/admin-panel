@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-// Инстанс ТОЛЬКО для обмена токенами (не добавляет Bearer автоматически)
 export const authApi = axios.create({
   baseURL: import.meta.env.VITE_AUTH_API_URL,
   headers: {
@@ -8,7 +7,6 @@ export const authApi = axios.create({
   }
 });
 
-// Можно добавить логирование или обработку ошибок при необходимости
 authApi.interceptors.response.use(
   (response) => response,
   (error) => {

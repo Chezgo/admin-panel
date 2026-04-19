@@ -1,9 +1,9 @@
 <template>
   <div class="page">
     <div class="page-header">
-      <h1>Бренды деталей</h1>
-      <router-link to="/brands/new" class="btn btn-primary">
-        <span>+</span> Создать бренд
+      <h1>Типы деталей</h1>
+      <router-link to="/types/new" class="btn btn-primary">
+        <span>+</span> Создать тип
       </router-link>
     </div>
 
@@ -25,7 +25,7 @@
     
     <div v-else-if="error" class="error-state">
       <p>⚠️ {{ error }}</p>
-      <button @click="fetchBrands" class="btn">Повторить</button>
+      <button @click="fetchTypes" class="btn">Повторить</button>
     </div>
 
     <div v-else class="card">
@@ -40,19 +40,19 @@
         </thead>
         <tbody>
           <tr 
-            v-for="brand in filteredBrands" 
-            :key="brand.id"
-            @click="goToDetail(brand.id)"
+            v-for="type in filteredTypes" 
+            :key="type.id"
+            @click="goToDetail(type.id)"
             class="clickable-row"
           >
-            <td>#{{ brand.id }}</td>
-            <td class="fw-medium">{{ brand.name }}</td>
-            <td class="text-truncate">{{ brand.description }}</td>
+            <td>#{{ type.id }}</td>
+            <td class="fw-medium">{{ type.name }}</td>
+            <td class="text-truncate">{{ type.description }}</td>
             <td @click.stop>
-              <router-link :to="`/brands/${brand.id}`" class="btn-icon" title="Открыть">👁️</router-link>
+              <router-link :to="`/types/${type.id}`" class="btn-icon" title="Открыть">👁️</router-link>
             </td>
           </tr>
-          <tr v-if="filteredBrands.length === 0">
+          <tr v-if="filteredTypes.length === 0">
             <td colspan="4" class="empty-state">
               {{ searchId ? 'Ничего не найдено' : 'Нет данных' }}
             </td>
@@ -66,28 +66,28 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import brandsApi from '@/services/brands';
+import detailTypesApi from '@/services/detailTypes';
 
 const router = useRouter();
-const brands = ref([]);
+const types = ref([]);
 const loading = ref(false);
 const error = ref(null);
 const searchId = ref('');
 
-const filteredBrands = computed(() => {
-  if (!searchId.value) return brands.value;
+const filteredTypes = computed(() => {
+  if (!searchId.value) return types.value;
   const id = parseInt(searchId.value, 10);
-  return brands.value.filter(b => b.id === id);
+  return types.value.filter(t => t.id === id);
 });
 
-const fetchBrands = async () => {
+const fetchTypes = async () => {
   loading.value = true;
   error.value = null;
   try {
-    const res = await brandsApi.getAll();
-    brands.value = Array.isArray(res.data) ? res.data : [];
+    const res = await detailTypesApi.getAll();
+    types.value = Array.isArray(res.data) ? res.data : [];
   } catch (err) {
-    error.value = err.response?.data?.message || 'Не удалось загрузить бренды';
+    error.value = err.response?.data?.message || 'Не удалось загрузить типы';
     console.error(err);
   } finally {
     loading.value = false;
@@ -100,9 +100,9 @@ const searchById = () => {
 };
 
 const resetSearch = () => { searchId.value = ''; };
-const goToDetail = (id) => { router.push(`/brands/${id}`); };
+const goToDetail = (id) => { router.push(`/types/${id}`); };
 
-onMounted(fetchBrands);
+onMounted(fetchTypes);
 </script>
 
 <style scoped>

@@ -42,11 +42,9 @@ const route = useRoute();
 const sidebarStore = useSidebarStore();
 
 const menuItems = [
-  { path: '/telescope-parts', title: 'Детали', icon: '🔧' },
-  { path: '/types', title: 'Типы деталей', icon: '📋' },
-  { path: '/brands', title: 'Бренды деталей', icon: '🏷️' },
-  { path: '/profiles', title: 'Профили', icon: '👤' },
-  { path: '/gallery', title: 'Галерея', icon: '🖼️' }
+  { path: '/telescope-parts', title: 'Детали телескопа', icon: '🔧' },
+  { path: '/brands', title: 'Бренды', icon: '🏷️' },
+  { path: '/types', title: 'Типы', icon: '📋' },
 ];
 
 const isActive = (path) => route.path.startsWith(path);

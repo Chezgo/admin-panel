@@ -32,13 +32,12 @@ onMounted(async () => {
     await authStore.handleCallback();
 
     statusMessage.value = 'Успех! Перенаправление...';
-    await new Promise(r => setTimeout(r, 300)); // Небольшая задержка для стабильности
+    await new Promise(r => setTimeout(r, 300)); // Небольшая задержка, надо выпилить скорее всего
     router.replace('/telescope-parts');
   } catch (err) {
     console.error('❌ Callback failed:', err);
     errorMessage.value = err.message;
     statusMessage.value = 'Ошибка авторизации';
-    // Не делаем router.replace('/') чтобы избежать цикла, лучше показать ошибку
   }
 });
 </script>
