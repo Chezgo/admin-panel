@@ -47,6 +47,45 @@ const routes = [
   meta: { title: 'Тип детали', requiresAuth: true },
   props: true
 },
+{
+  path: '/profiles',
+  name: 'ProfileList',
+  component: () => import('@/views/profiles/ProfileList.vue'),
+  meta: { title: 'Профили пользователей', requiresAuth: true }
+},
+{
+  path: '/profiles/:id',
+  name: 'ProfileDetail',
+  component: () => import('@/views/profiles/ProfileDetail.vue'),
+  meta: { title: 'Профиль', requiresAuth: true },
+  props: true
+},
+{
+  path: '/attributes',
+  name: 'AttributeList',
+  component: () => import('@/views/attributes/AttributeList.vue'),
+  meta: { title: 'Характеристики деталей', requiresAuth: true }
+},
+{
+  path: '/attributes/:id',
+  name: 'AttributeDetail',
+  component: () => import('@/views/attributes/AttributeDetail.vue'),
+  meta: { title: 'Характеристика', requiresAuth: true },
+  props: true
+},
+{
+  path: '/assemblies',
+  name: 'AssemblyList',
+  component: () => import('@/views/assemblies/AssemblyList.vue'),
+  meta: { title: 'Сборки телескопов', requiresAuth: true }
+},
+{
+  path: '/assemblies/:id',
+  name: 'AssemblyDetail',
+  component: () => import('@/views/assemblies/AssemblyDetail.vue'),
+  meta: { title: 'Сборка', requiresAuth: true },
+  props: true
+},
   
   
   { path: '/:pathMatch(.*)*', redirect: '/telescope-parts' }

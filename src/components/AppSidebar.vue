@@ -45,6 +45,9 @@ const menuItems = [
   { path: '/telescope-parts', title: 'Детали телескопа', icon: '🔧' },
   { path: '/brands', title: 'Бренды', icon: '🏷️' },
   { path: '/types', title: 'Типы', icon: '📋' },
+  { path: '/profiles', title: 'Профили', icon: '👤' },
+  { path: '/attributes', title: 'Характеристики', icon: '⚙️' }, 
+    { path: '/assemblies', title: 'Сборки', icon: '🔭' },
 ];
 
 const isActive = (path) => route.path.startsWith(path);
