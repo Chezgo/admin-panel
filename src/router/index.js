@@ -86,6 +86,19 @@ const routes = [
   meta: { title: 'Сборка', requiresAuth: true },
   props: true
 },
+{
+  path: '/photos',
+  name: 'PhotoList',
+  component: () => import('@/views/photos/PhotoList.vue'),
+  meta: { title: 'Фотографии', requiresAuth: true }
+},
+{
+  path: '/photos/:id',
+  name: 'PhotoDetail',
+  component: () => import('@/views/photos/PhotoDetail.vue'),
+  meta: { title: 'Фото', requiresAuth: true },
+  props: true
+},
   
   
   { path: '/:pathMatch(.*)*', redirect: '/telescope-parts' }

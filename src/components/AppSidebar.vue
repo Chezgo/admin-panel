@@ -47,7 +47,8 @@ const menuItems = [
   { path: '/types', title: 'Типы', icon: '📋' },
   { path: '/profiles', title: 'Профили', icon: '👤' },
   { path: '/attributes', title: 'Характеристики', icon: '⚙️' }, 
-    { path: '/assemblies', title: 'Сборки', icon: '🔭' },
+  { path: '/assemblies', title: 'Сборки', icon: '🔭' },
+  { path: '/photos', title: 'Фото', icon: '📷' },
 ];
 
 const isActive = (path) => route.path.startsWith(path);
