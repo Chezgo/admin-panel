@@ -11,7 +11,7 @@ ARG VITE_KEYCLOAK_REALM
 ARG VITE_KEYCLOAK_CLIENT_ID
 ARG VITE_AUTH_API_URL
 ARG VITE_API_BASE_URL
-
+RUN chmod +x node_modules/.bin/vite
 RUN npm run build
 
 FROM nginx:alpine
