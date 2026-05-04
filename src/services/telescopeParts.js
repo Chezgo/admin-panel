@@ -19,6 +19,8 @@ api.interceptors.request.use(async (config) => {
   }
   return config;
 });
+
+// 🔄 Обработка 401
 api.interceptors.response.use(
   (res) => res,
   (err) => {
@@ -30,7 +32,17 @@ api.interceptors.response.use(
 );
 
 export default {
-  getAll: (params) => api.get('/detail', { params }),
+  getAll: (params = {}) => {
+    const defaultParams = {
+      page: 0,        // номер страницы (0-based)
+      size: 10,       // элементов на странице
+      sortBy: 'name', // поле сортировки
+      sortDir: 'asc', // направление (asc/desc)
+      ...params
+    };
+    return api.get('/detail', { params: defaultParams });
+  },
+
   getById: (id) => api.get(`/detail/${id}`),
   create: (data) => api.post('/detail', data),
   update: (id, data) => api.put(`/detail/${id}`, data),
