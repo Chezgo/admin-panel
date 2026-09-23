@@ -87,6 +87,12 @@ const routes = [
   props: true
 },
 {
+  path: '/assembly-goals',
+  name: 'AssemblyGoalManagement',
+  component: () => import('@/views/assembly-goals/AssemblyGoalManagement.vue'),
+  meta: { title: 'Управление целями сборок', requiresAuth: true }
+},
+{
   path: '/photos',
   name: 'PhotoList',
   component: () => import('@/views/photos/PhotoList.vue'),

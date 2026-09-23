@@ -28,6 +28,7 @@ import {
   ListTree,
   SlidersHorizontal,
   Tags,
+  Target,
   Telescope,
   Users,
   Wrench,
@@ -42,6 +43,7 @@ const menuItems = [
   { path: '/profiles', title: 'Профили', icon: Users },
   { path: '/attributes', title: 'Характеристики деталей', icon: SlidersHorizontal },
   { path: '/assemblies', title: 'Сборки', icon: Telescope },
+  { path: '/assembly-goals', title: 'Цели сборок', icon: Target },
   { path: '/photos', title: 'Фото', icon: Camera },
 ];
 
