@@ -3,7 +3,7 @@
     <div class="header-content">
       <!-- Логотип слева -->
       <div class="logo-area">
-        <div class="logo-icon">🔭</div>
+        <Telescope class="logo-icon" aria-hidden="true" />
         <span class="logo-text">Астрофото Админ</span>
       </div>
 
@@ -16,11 +16,7 @@
       <div class="header-right">
         <button @click="handleLogout" class="logout-btn" title="Выйти">
           <span>Выйти</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-            <polyline points="16 17 21 12 16 7"></polyline>
-            <line x1="21" y1="12" x2="9" y2="12"></line>
-          </svg>
+          <LogOut class="ui-icon" aria-hidden="true" />
         </button>
       </div>
     </div>
@@ -29,12 +25,12 @@
 
 <script setup>
 import { computed } from 'vue';
+import { LogOut, Telescope } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 
 const authStore = useAuthStore();
 
 const username = computed(() => authStore.getUsername);
-const userInitial = computed(() => username.value.charAt(0).toUpperCase());
 
 const handleLogout = () => {
   if (confirm('Вы действительно хотите выйти?')) {
@@ -76,7 +72,9 @@ const handleLogout = () => {
 }
 
 .logo-icon {
-  font-size: 1.5rem;
+  width: 24px;
+  height: 24px;
+  color: #60a5fa;
   filter: drop-shadow(0 0 6px rgba(96, 165, 250, 0.5));
 }
 
@@ -90,16 +88,22 @@ const handleLogout = () => {
 
 /* Логин посередине */
 .user-display {
+  min-width: 0;
   justify-self: center;
   text-align: center;
 }
 
 .user-name {
+  display: block;
+  max-width: min(40vw, 32rem);
+  overflow: hidden;
   font-size: 1.1rem;
   font-weight: 600;
   color: #cbd5e1;
+  text-overflow: ellipsis;
   text-shadow: 0 0 8px rgba(96, 165, 250, 0.3);
   letter-spacing: 0.01em;
+  white-space: nowrap;
 }
 
 /* Правая часть */
@@ -158,6 +162,7 @@ const handleLogout = () => {
   }
   
   .user-name {
+    max-width: 52vw;
     font-size: 0.95rem;
   }
   

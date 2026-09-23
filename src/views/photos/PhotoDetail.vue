@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <div class="page-header">
-      <button @click="$router.back()" class="btn btn-back">← Назад к галерее</button>
+      <button @click="$router.back()" class="btn btn-back"><AppIconArrowLeft class="ui-icon" /> Назад к галерее</button>
     </div>
 
     <!-- Состояния -->
@@ -11,8 +11,8 @@
     </div>
     
     <div v-else-if="error" class="error-state">
-      <p>⚠️ {{ error }}</p>
-      <button @click="fetchPhoto" class="btn">Повторить</button>
+      <p class="status-message"><AppIconAlert class="ui-icon" /> {{ error }}</p>
+      <button @click="fetchPhoto" class="btn"><AppIconRefresh class="ui-icon" /> Повторить</button>
     </div>
 
     <!-- Деталь фото -->
@@ -24,7 +24,7 @@
       
       <!-- Метаданные -->
       <div class="metadata-card">
-        <h2>📋 Информация о фото</h2>
+        <h2 class="icon-heading"><AppIconInfo class="ui-icon-lg" /> Информация о фото</h2>
         
         <div class="meta-row">
           <label>Имя файла</label>
@@ -38,12 +38,12 @@
         
         <div class="meta-row">
           <label>Сборка</label>
-          <span class="value">🔭 #{{ photo.telescopeAssemblyId }}</span>
+          <span class="value icon-value"><AppIconTelescope class="ui-icon" /> #{{ photo.telescopeAssemblyId }}</span>
         </div>
         
         <div class="meta-row">
           <label>Профиль</label>
-          <span class="value">👤 #{{ photo.profileId }}</span>
+          <span class="value icon-value"><AppIconUser class="ui-icon" /> #{{ photo.profileId }}</span>
         </div>
         
         <div class="meta-row">
@@ -69,7 +69,7 @@
         <!-- Кнопка удаления -->
         <div class="actions">
           <button @click="handleDelete" class="btn btn-danger">
-            🗑️ Удалить фото
+            <AppIconTrash class="ui-icon" /> Удалить фото
           </button>
         </div>
       </div>
@@ -144,10 +144,10 @@ const handleDelete = async () => {
   
   try {
     await photosApi.deletePhoto(photoId.value);
-    alert('✅ Фото удалено');
+    alert('Фото удалено');
     router.replace('/photos');
   } catch (err) {
-    alert('❌ Ошибка удаления: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка удаления: ' + (err.response?.data?.message || err.message));
   }
 };
 

@@ -2,12 +2,12 @@
   <div class="page">
     <div class="page-header">
       <div>
-        <button @click="$router.back()" class="btn btn-back">← Назад</button>
+        <button @click="$router.back()" class="btn btn-back"><AppIconArrowLeft class="ui-icon" /> Назад</button>
         <h1>{{ brand?.name || 'Загрузка...' }}</h1>
       </div>
       <div v-if="brand" class="actions">
-        <button @click="handleEdit" class="btn">✏️ Редактировать</button>
-        <button @click="handleDelete" class="btn btn-danger">🗑️ Удалить</button>
+        <button @click="handleEdit" class="btn"><AppIconPencil class="ui-icon" /> Редактировать</button>
+        <button @click="handleDelete" class="btn btn-danger"><AppIconTrash class="ui-icon" /> Удалить</button>
       </div>
     </div>
 
@@ -17,8 +17,8 @@
     </div>
     
     <div v-else-if="error" class="error-state">
-      <p>⚠️ {{ error }}</p>
-      <button @click="fetchBrand" class="btn">Повторить</button>
+      <p class="status-message"><AppIconAlert class="ui-icon" /> {{ error }}</p>
+      <button @click="fetchBrand" class="btn"><AppIconRefresh class="ui-icon" /> Повторить</button>
     </div>
 
     <div v-else-if="brand" class="card detail-card">
@@ -42,7 +42,7 @@
       <div class="modal">
         <div class="modal-header">
           <h2>Редактировать бренд</h2>
-          <button @click="closeEditModal" class="close-btn">×</button>
+          <button @click="closeEditModal" class="close-btn" title="Закрыть"><AppIconClose class="ui-icon" /></button>
         </div>
         
         <form @submit.prevent="submitEdit" class="modal-body">
@@ -140,9 +140,9 @@ const submitEdit = async () => {
     await brandsApi.update(brandId.value, editForm.value);
     closeEditModal();
     fetchBrand();
-    alert('✅ Бренд обновлён');
+    alert('Бренд обновлён');
   } catch (err) {
-    alert('❌ Ошибка: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка: ' + (err.response?.data?.message || err.message));
   } finally {
     submitting.value = false;
   }
@@ -154,7 +154,7 @@ const submitCreate = async () => {
     const res = await brandsApi.create(createForm.value);
     router.replace(`/brands/${res.data.id}`);
   } catch (err) {
-    alert('❌ Ошибка создания: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка создания: ' + (err.response?.data?.message || err.message));
   } finally {
     submitting.value = false;
   }
@@ -167,7 +167,7 @@ const handleDelete = async () => {
     await brandsApi.delete(brandId.value);
     router.replace('/brands');
   } catch (err) {
-    alert('❌ Ошибка удаления: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка удаления: ' + (err.response?.data?.message || err.message));
   }
 };
 

@@ -2,12 +2,12 @@
   <div class="page">
     <div class="page-header">
       <div>
-        <button @click="$router.back()" class="btn btn-back">← Назад</button>
+        <button @click="$router.back()" class="btn btn-back"><AppIconArrowLeft class="ui-icon" /> Назад</button>
         <h1>{{ typeDetail?.name || 'Загрузка...' }}</h1>
       </div>
       <div v-if="typeDetail" class="actions">
-        <button @click="handleEdit" class="btn">✏️ Редактировать</button>
-        <button @click="handleDelete" class="btn btn-danger">🗑️ Удалить</button>
+        <button @click="handleEdit" class="btn"><AppIconPencil class="ui-icon" /> Редактировать</button>
+        <button @click="handleDelete" class="btn btn-danger"><AppIconTrash class="ui-icon" /> Удалить</button>
       </div>
     </div>
 
@@ -18,8 +18,8 @@
     </div>
     
     <div v-else-if="error" class="error-state">
-      <p>⚠️ {{ error }}</p>
-      <button @click="fetchType" class="btn">Повторить</button>
+      <p class="status-message"><AppIconAlert class="ui-icon" /> {{ error }}</p>
+      <button @click="fetchType" class="btn"><AppIconRefresh class="ui-icon" /> Повторить</button>
     </div>
 
     <!-- Карточка типа -->
@@ -45,7 +45,7 @@
       <div class="modal">
         <div class="modal-header">
           <h2>Редактировать тип</h2>
-          <button @click="closeEditModal" class="close-btn">×</button>
+          <button @click="closeEditModal" class="close-btn" title="Закрыть"><AppIconClose class="ui-icon" /></button>
         </div>
         
         <form @submit.prevent="submitEdit" class="modal-body">
@@ -143,9 +143,9 @@ const submitEdit = async () => {
     await detailTypesApi.update(typeId.value, editForm.value);
     closeEditModal();
     fetchType();
-    alert('✅ Тип обновлён');
+    alert('Тип обновлён');
   } catch (err) {
-    alert('❌ Ошибка: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка: ' + (err.response?.data?.message || err.message));
   } finally {
     submitting.value = false;
   }
@@ -157,7 +157,7 @@ const submitCreate = async () => {
     const res = await detailTypesApi.create(createForm.value);
     router.replace(`/types/${res.data.id}`);
   } catch (err) {
-    alert('❌ Ошибка создания: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка создания: ' + (err.response?.data?.message || err.message));
   } finally {
     submitting.value = false;
   }
@@ -170,7 +170,7 @@ const handleDelete = async () => {
     await detailTypesApi.delete(typeId.value);
     router.replace('/types');
   } catch (err) {
-    alert('❌ Ошибка удаления: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка удаления: ' + (err.response?.data?.message || err.message));
   }
 };
 

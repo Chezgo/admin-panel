@@ -2,12 +2,12 @@
   <div class="page">
     <div class="page-header">
       <div>
-        <button @click="$router.back()" class="btn btn-back">← Назад</button>
+        <button @click="$router.back()" class="btn btn-back"><AppIconArrowLeft class="ui-icon" /> Назад</button>
         <h1>{{ profile?.name || 'Загрузка...' }}</h1>
       </div>
       <div v-if="profile && !isNew" class="actions">
-        <button @click="handleEdit" class="btn">✏️ Редактировать</button>
-        <button @click="handleDelete" class="btn btn-danger">🗑️ Удалить</button>
+        <button @click="handleEdit" class="btn"><AppIconPencil class="ui-icon" /> Редактировать</button>
+        <button @click="handleDelete" class="btn btn-danger"><AppIconTrash class="ui-icon" /> Удалить</button>
       </div>
     </div>
 
@@ -18,8 +18,8 @@
     </div>
     
     <div v-else-if="error" class="error-state">
-      <p>⚠️ {{ error }}</p>
-      <button @click="fetchProfile" class="btn">Повторить</button>
+      <p class="status-message"><AppIconAlert class="ui-icon" /> {{ error }}</p>
+      <button @click="fetchProfile" class="btn"><AppIconRefresh class="ui-icon" /> Повторить</button>
     </div>
 
     <!-- Карточка профиля -->
@@ -45,7 +45,7 @@
       <div class="modal">
         <div class="modal-header">
           <h2>Редактировать профиль</h2>
-          <button @click="closeEditModal" class="close-btn">×</button>
+          <button @click="closeEditModal" class="close-btn" title="Закрыть"><AppIconClose class="ui-icon" /></button>
         </div>
         
         <form @submit.prevent="submitEdit" class="modal-body">
@@ -144,11 +144,11 @@ const submitEdit = async () => {
     await profilesApi.update(profileId.value, editForm.value);
     closeEditModal();
     await fetchProfile(); // перезагружаем данные
-    alert('✅ Профиль обновлён');
+    alert('Профиль обновлён');
   } catch (err) {
     // 204 не считается ошибкой, но если есть реальная ошибка — покажем
     if (err.response?.status !== 204) {
-      alert('❌ Ошибка: ' + (err.response?.data?.message || err.message));
+      alert('Ошибка: ' + (err.response?.data?.message || err.message));
     }
   } finally {
     submitting.value = false;
@@ -162,7 +162,7 @@ const submitCreate = async () => {
     // Create возвращает созданный объект с ID
     router.replace(`/profiles/${res.data.id}`);
   } catch (err) {
-    alert('❌ Ошибка создания: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка создания: ' + (err.response?.data?.message || err.message));
   } finally {
     submitting.value = false;
   }
@@ -177,7 +177,7 @@ const handleDelete = async () => {
     router.replace('/profiles');
   } catch (err) {
     if (err.response?.status !== 204) {
-      alert('❌ Ошибка удаления: ' + (err.response?.data?.message || err.message));
+      alert('Ошибка удаления: ' + (err.response?.data?.message || err.message));
     }
   }
 };

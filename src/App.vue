@@ -26,14 +26,12 @@
 
 <script setup>
 import { onMounted, computed } from 'vue';
-import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import AppHeader from '@/components/AppHeader.vue';
 import AppSidebar from '@/components/AppSidebar.vue';
 import AppFooter from '@/components/AppFooter.vue';
 
 const authStore = useAuthStore();
-const router = useRouter();
 const isCallbackRoute = computed(() => window.location.pathname === '/callback');
 
 onMounted(async () => {
@@ -70,6 +68,7 @@ body {
 .content-wrapper {
   display: flex;
   flex: 1;
+  min-width: 0;
   min-height: calc(100vh - 110px);
 }
 
@@ -77,6 +76,7 @@ body {
   position: relative;
   background-color: #0b1120;
   flex: 1;
+  min-width: 0;
   padding: 2rem;
   overflow-y: auto;
   z-index: 1;
@@ -195,6 +195,82 @@ body {
   color: #fecaca;
 }
 
+.ui-icon {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex-shrink: 0;
+  stroke-width: 2;
+}
+
+.ui-icon-lg {
+  width: 1.35rem;
+  height: 1.35rem;
+  flex-shrink: 0;
+  stroke-width: 2;
+}
+
+.icon-heading,
+.status-message,
+.icon-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-message {
+  justify-content: center;
+}
+
+.status-message .ui-icon {
+  color: #f87171;
+}
+
+.btn-icon {
+  line-height: 0;
+}
+
+.pagination-btn {
+  display: inline-flex !important;
+  width: 40px !important;
+  height: 36px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  border: 1px solid rgba(96, 165, 250, 0.65) !important;
+  border-radius: 8px !important;
+  background: rgba(37, 99, 235, 0.22) !important;
+  color: #dbeafe !important;
+  box-shadow: inset 0 0 0 1px rgba(147, 197, 253, 0.04);
+}
+
+.pagination-btn .ui-icon {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2.5;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  border-color: #93c5fd !important;
+  background: #2563eb !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 14px rgba(59, 130, 246, 0.35);
+  transform: translateY(-1px);
+}
+
+.pagination-btn:focus-visible {
+  outline: 2px solid #93c5fd;
+  outline-offset: 2px;
+}
+
+.pagination-btn:disabled {
+  border-color: rgba(96, 165, 250, 0.28) !important;
+  background: rgba(30, 64, 175, 0.1) !important;
+  color: #64748b !important;
+  opacity: 1 !important;
+  cursor: not-allowed !important;
+  box-shadow: none;
+}
+
 h1, h2, h3 {
   position: relative;
   z-index: 1;
@@ -231,5 +307,119 @@ h3 { font-size: 1.1rem; font-weight: 600; }
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #2563eb;
+}
+
+@media (max-width: 768px) {
+  .content-wrapper {
+    display: block;
+    min-height: calc(100vh - 60px);
+  }
+
+  .main-content {
+    min-height: calc(100vh - 60px);
+    padding: 1rem 1rem calc(5.25rem + env(safe-area-inset-bottom));
+    overflow: visible;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    line-height: 1.25;
+  }
+
+  h2 { font-size: 1.2rem; }
+  .page-header { margin-bottom: 1.25rem; }
+  .card { border-radius: 10px; }
+}
+
+@media (max-width: 640px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  .modal-overlay {
+    align-items: flex-end !important;
+    padding: 0 !important;
+  }
+
+  .modal {
+    width: 100% !important;
+    max-height: 94dvh !important;
+    overflow-y: auto;
+    border-radius: 14px 14px 0 0 !important;
+  }
+
+  .modal-header,
+  .modal-body {
+    padding-right: 1rem !important;
+    padding-left: 1rem !important;
+  }
+
+  .modal-footer { flex-wrap: wrap; }
+
+  .modal-footer .btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .controls-bar { align-items: stretch !important; }
+
+  .search-input,
+  .sort-control,
+  .page-control {
+    width: 100%;
+  }
+
+  .sort-control,
+  .page-control {
+    justify-content: space-between;
+  }
+
+  .sort-control select {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .data-table,
+  .data-table tbody,
+  .data-table tr,
+  .data-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .data-table thead { display: none; }
+  .data-table tbody { padding: 0.35rem; }
+
+  .data-table tr {
+    margin-bottom: 0.6rem;
+    padding: 0.75rem;
+    background: rgba(30, 41, 59, 0.45);
+    border-radius: 8px;
+  }
+
+  .data-table tr:last-child { margin-bottom: 0; }
+
+  .data-table td {
+    max-width: none !important;
+    padding: 0.3rem 0.25rem !important;
+    overflow: visible !important;
+    border: 0 !important;
+    text-overflow: initial !important;
+    white-space: normal !important;
+  }
+
+  .data-table td:first-child {
+    color: #64748b;
+    font-size: 0.78rem;
+  }
+
+  .data-table .action-buttons {
+    justify-content: flex-end;
+    padding-top: 0.25rem;
+  }
+
+  .form-row { grid-template-columns: 1fr !important; }
 }
 </style>

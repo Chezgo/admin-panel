@@ -2,12 +2,12 @@
   <div class="page">
     <div class="page-header">
       <div>
-        <button @click="$router.back()" class="btn btn-back">← Назад</button>
+        <button @click="$router.back()" class="btn btn-back"><AppIconArrowLeft class="ui-icon" /> Назад</button>
         <h1>{{ attribute?.name || 'Загрузка...' }}</h1>
       </div>
       <div v-if="attribute && !isNew" class="actions">
-        <button @click="handleEdit" class="btn">✏️ Редактировать</button>
-        <button @click="handleDelete" class="btn btn-danger">🗑️ Удалить</button>
+        <button @click="handleEdit" class="btn"><AppIconPencil class="ui-icon" /> Редактировать</button>
+        <button @click="handleDelete" class="btn btn-danger"><AppIconTrash class="ui-icon" /> Удалить</button>
       </div>
     </div>
 
@@ -18,8 +18,8 @@
     </div>
     
     <div v-else-if="error" class="error-state">
-      <p>⚠️ {{ error }}</p>
-      <button @click="fetchAttribute" class="btn">Повторить</button>
+      <p class="status-message"><AppIconAlert class="ui-icon" /> {{ error }}</p>
+      <button @click="fetchAttribute" class="btn"><AppIconRefresh class="ui-icon" /> Повторить</button>
     </div>
 
     <!-- Карточка характеристики -->
@@ -52,7 +52,7 @@
       <div class="modal">
         <div class="modal-header">
           <h2>Редактировать характеристику</h2>
-          <button @click="closeEditModal" class="close-btn">×</button>
+          <button @click="closeEditModal" class="close-btn" title="Закрыть"><AppIconClose class="ui-icon" /></button>
         </div>
         
         <form @submit.prevent="submitEdit" class="modal-body">
@@ -192,9 +192,9 @@ const submitEdit = async () => {
     await attributesApi.update(attributeId.value, editForm.value);
     closeEditModal();
     await fetchAttribute();
-    alert('✅ Характеристика обновлена');
+    alert('Характеристика обновлена');
   } catch (err) {
-    alert('❌ Ошибка: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка: ' + (err.response?.data?.message || err.message));
   } finally {
     submitting.value = false;
   }
@@ -206,7 +206,7 @@ const submitCreate = async () => {
     const res = await attributesApi.create(createForm.value);
     router.replace(`/attributes/${res.data.id}`);
   } catch (err) {
-    alert('❌ Ошибка создания: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка создания: ' + (err.response?.data?.message || err.message));
   } finally {
     submitting.value = false;
   }
@@ -219,7 +219,7 @@ const handleDelete = async () => {
     await attributesApi.delete(attributeId.value);
     router.replace('/attributes');
   } catch (err) {
-    alert('❌ Ошибка удаления: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка удаления: ' + (err.response?.data?.message || err.message));
   }
 };
 

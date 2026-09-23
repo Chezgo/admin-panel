@@ -3,7 +3,7 @@
     <div class="page-header">
       <h1>Типы деталей</h1>
       <router-link to="/types/new" class="btn btn-primary">
-        <span>+</span> Создать тип
+        <AppIconPlus class="ui-icon" /> Создать тип
       </router-link>
     </div>
 
@@ -11,11 +11,11 @@
       <input 
         v-model="searchId" 
         @keyup.enter="searchById"
-        placeholder="🔍 Поиск по ID (нажмите Enter)" 
+        placeholder="Поиск по ID (нажмите Enter)"
         class="search-input"
       >
-      <button @click="searchById" class="btn">Найти</button>
-      <button v-if="searchId" @click="resetSearch" class="btn btn-danger">Сбросить</button>
+      <button @click="searchById" class="btn"><AppIconSearch class="ui-icon" /> Найти</button>
+      <button v-if="searchId" @click="resetSearch" class="btn btn-danger"><AppIconReset class="ui-icon" /> Сбросить</button>
     </div>
 
     <div v-if="loading" class="loading-state">
@@ -24,8 +24,8 @@
     </div>
     
     <div v-else-if="error" class="error-state">
-      <p>⚠️ {{ error }}</p>
-      <button @click="fetchTypes" class="btn">Повторить</button>
+      <p class="status-message"><AppIconAlert class="ui-icon" /> {{ error }}</p>
+      <button @click="fetchTypes" class="btn"><AppIconRefresh class="ui-icon" /> Повторить</button>
     </div>
 
     <div v-else class="card">
@@ -49,7 +49,7 @@
             <td class="fw-medium">{{ type.name }}</td>
             <td class="text-truncate">{{ type.description }}</td>
             <td @click.stop>
-              <router-link :to="`/types/${type.id}`" class="btn-icon" title="Открыть">👁️</router-link>
+              <router-link :to="`/types/${type.id}`" class="btn-icon" title="Открыть"><AppIconEye class="ui-icon" /></router-link>
             </td>
           </tr>
           <tr v-if="filteredTypes.length === 0">

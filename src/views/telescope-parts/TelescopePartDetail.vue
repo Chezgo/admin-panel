@@ -2,12 +2,12 @@
   <div class="page">
     <div class="page-header">
       <div>
-        <button @click="$router.back()" class="btn btn-back">← Назад</button>
+        <button @click="$router.back()" class="btn btn-back"><AppIconArrowLeft class="ui-icon" /> Назад</button>
         <h1>{{ part?.name || 'Загрузка...' }}</h1>
       </div>
       <div v-if="part && !isNew" class="actions">
-        <button @click="handleEdit" class="btn">✏️ Редактировать</button>
-        <button @click="handleDelete" class="btn btn-danger">🗑️ Удалить</button>
+        <button @click="handleEdit" class="btn"><AppIconPencil class="ui-icon" /> Редактировать</button>
+        <button @click="handleDelete" class="btn btn-danger"><AppIconTrash class="ui-icon" /> Удалить</button>
       </div>
     </div>
 
@@ -18,8 +18,8 @@
     </div>
     
     <div v-else-if="error" class="error-state">
-      <p>⚠️ {{ error }}</p>
-      <button @click="fetchPart" class="btn">Повторить</button>
+      <p class="status-message"><AppIconAlert class="ui-icon" /> {{ error }}</p>
+      <button @click="fetchPart" class="btn"><AppIconRefresh class="ui-icon" /> Повторить</button>
     </div>
 
     <!-- Карточка детали -->
@@ -53,8 +53,8 @@
     <!-- ===== НОВАЯ СЕКЦИЯ: Значения атрибутов ===== -->
     <div v-if="part && !isNew" class="section">
       <div class="section-header">
-        <h2>⚙️ Характеристики</h2>
-        <button @click="openAddAttributeModal" class="btn btn-primary">+ Добавить характеристику</button>
+        <h2 class="icon-heading"><AppIconSliders class="ui-icon-lg" /> Характеристики</h2>
+        <button @click="openAddAttributeModal" class="btn btn-primary"><AppIconPlus class="ui-icon" /> Добавить характеристику</button>
       </div>
 
       <!-- Состояния для атрибутов -->
@@ -64,7 +64,7 @@
       </div>
       
       <div v-else-if="attributesError" class="error-state small">
-        <p>⚠️ {{ attributesError }}</p>
+        <p class="status-message"><AppIconAlert class="ui-icon" /> {{ attributesError }}</p>
       </div>
 
       <!-- Таблица значений атрибутов -->
@@ -90,8 +90,8 @@
               <td class="value-cell">{{ attr.value }}</td>
               <td class="text-truncate">{{ attr.description || '—' }}</td>
               <td class="actions">
-                <button @click="openEditAttributeModal(attr)" class="btn-icon" title="Редактировать">✏️</button>
-                <button @click="handleDeleteAttribute(attr.id)" class="btn-icon danger" title="Удалить">🗑️</button>
+                <button @click="openEditAttributeModal(attr)" class="btn-icon" title="Редактировать"><AppIconPencil class="ui-icon" /></button>
+                <button @click="handleDeleteAttribute(attr.id)" class="btn-icon danger" title="Удалить"><AppIconTrash class="ui-icon" /></button>
               </td>
             </tr>
             <tr v-if="attributeValues.length === 0">
@@ -107,7 +107,7 @@
       <div class="modal">
         <div class="modal-header">
           <h2>Редактировать деталь</h2>
-          <button @click="closeEditModal" class="close-btn">×</button>
+          <button @click="closeEditModal" class="close-btn" title="Закрыть"><AppIconClose class="ui-icon" /></button>
         </div>
         
         <form @submit.prevent="submitEdit" class="modal-body">
@@ -158,7 +158,7 @@
       <div class="modal">
         <div class="modal-header">
           <h2>{{ editingAttributeId ? 'Редактировать' : 'Добавить' }} характеристику</h2>
-          <button @click="closeAttributeModal" class="close-btn">×</button>
+          <button @click="closeAttributeModal" class="close-btn" title="Закрыть"><AppIconClose class="ui-icon" /></button>
         </div>
         
         <form @submit.prevent="submitAttribute" class="modal-body">
@@ -356,9 +356,9 @@ const submitEdit = async () => {
     await telescopePartsApi.update(partId.value, editForm.value);
     closeEditModal();
     await fetchPart();
-    alert('✅ Деталь обновлена');
+    alert('Деталь обновлена');
   } catch (err) {
-    alert('❌ Ошибка: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка: ' + (err.response?.data?.message || err.message));
   } finally {
     submitting.value = false;
   }
@@ -370,7 +370,7 @@ const submitCreate = async () => {
     const res = await telescopePartsApi.create(createForm.value);
     router.replace(`/telescope-parts/${res.data.id}`);
   } catch (err) {
-    alert('❌ Ошибка создания: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка создания: ' + (err.response?.data?.message || err.message));
   } finally {
     submitting.value = false;
   }
@@ -383,7 +383,7 @@ const handleDelete = async () => {
     await telescopePartsApi.delete(partId.value);
     router.replace('/telescope-parts');
   } catch (err) {
-    alert('❌ Ошибка удаления: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка удаления: ' + (err.response?.data?.message || err.message));
   }
 };
 
@@ -435,10 +435,10 @@ const submitAttribute = async () => {
     
     closeAttributeModal();
     await fetchAttributeValues(); // Перезагружаем список
-    alert('✅ Характеристика сохранена');
+    alert('Характеристика сохранена');
     
   } catch (err) {
-    alert('❌ Ошибка: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка: ' + (err.response?.data?.message || err.message));
   } finally {
     submittingAttribute.value = false;
   }
@@ -451,7 +451,7 @@ const handleDeleteAttribute = async (attrId) => {
     await attributeValuesApi.delete(attrId);
     await fetchAttributeValues();
   } catch (err) {
-    alert('❌ Ошибка удаления: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка удаления: ' + (err.response?.data?.message || err.message));
   }
 };
 
@@ -503,7 +503,7 @@ onMounted(async () => {
 .form-select {
   cursor: pointer;
   appearance: none;
-  background-image: url("image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
   background-position: right 0.5rem center;
   background-repeat: no-repeat;
   background-size: 1.5em 1.5em;
@@ -598,7 +598,7 @@ onMounted(async () => {
 .form-select {
   cursor: pointer;
   appearance: none;
-  background-image: url("image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
   background-position: right 0.5rem center;
   background-repeat: no-repeat;
   background-size: 1.5em 1.5em;

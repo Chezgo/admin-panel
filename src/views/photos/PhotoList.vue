@@ -1,18 +1,18 @@
 <template>
   <div class="page">
     <div class="page-header">
-      <h1>📷 Мои фотографии</h1>
+      <h1 class="icon-heading"><AppIconImage class="ui-icon-lg" /> Фотографии</h1>
       <button @click="openUploadModal" class="btn btn-primary">
-        <span>⬆️</span> Загрузить фото
+        <AppIconUpload class="ui-icon" /> Загрузить фото
       </button>
     </div>
 
     <!-- Пагинация -->
     <div class="controls-bar">
       <div class="page-control">
-        <button @click="prevPage" :disabled="currentPage === 0" class="btn-icon">←</button>
+        <button @click="prevPage" :disabled="currentPage === 0" class="btn-icon pagination-btn" title="Предыдущая страница"><AppIconChevronLeft class="ui-icon" /></button>
         <span class="page-info">Стр. {{ currentPage + 1 }} из {{ totalPages }}</span>
-        <button @click="nextPage" :disabled="currentPage >= totalPages - 1" class="btn-icon">→</button>
+        <button @click="nextPage" :disabled="currentPage >= totalPages - 1" class="btn-icon pagination-btn" title="Следующая страница"><AppIconChevronRight class="ui-icon" /></button>
       </div>
       <span class="total-count">Всего: {{ totalElements }}</span>
     </div>
@@ -24,8 +24,8 @@
     </div>
     
     <div v-else-if="error" class="error-state">
-      <p>⚠️ {{ error }}</p>
-      <button @click="fetchPhotos" class="btn">Повторить</button>
+      <p class="status-message"><AppIconAlert class="ui-icon" /> {{ error }}</p>
+      <button @click="fetchPhotos" class="btn"><AppIconRefresh class="ui-icon" /> Повторить</button>
     </div>
 
     <!-- Галерея -->
@@ -60,13 +60,13 @@
         
         <!-- Метаданные под фото -->
         <div class="photo-info">
-          <span class="assembly-badge">🔭 Сборка #{{ photo.telescopeAssemblyId }}</span>
+          <span class="assembly-badge icon-value"><AppIconTelescope class="ui-icon" /> Сборка #{{ photo.telescopeAssemblyId }}</span>
           <span class="date">{{ formatDate(photo.createdAt) }}</span>
         </div>
       </div>
       
       <div v-if="photos.length === 0" class="empty-gallery">
-        <p>📭 Нет загруженных фотографий</p>
+        <p class="status-message"><AppIconInbox class="ui-icon-lg" /> Нет загруженных фотографий</p>
         <button @click="openUploadModal" class="btn btn-primary">Загрузить первое фото</button>
       </div>
     </div>
@@ -76,7 +76,7 @@
       <div class="modal">
         <div class="modal-header">
           <h2>Загрузить фотографию</h2>
-          <button @click="closeUploadModal" class="close-btn">×</button>
+          <button @click="closeUploadModal" class="close-btn" title="Закрыть"><AppIconClose class="ui-icon" /></button>
         </div>
         
         <form @submit.prevent="submitUpload" class="modal-body">
@@ -287,9 +287,9 @@ const submitUpload = async () => {
     await photosApi.uploadPhoto(selectedFile.value, uploadForm.value.assemblyId);
     closeUploadModal();
     fetchPhotos(); // Обновить галерею
-    alert('✅ Фото загружено!');
+    alert('Фото загружено!');
   } catch (err) {
-    alert('❌ Ошибка загрузки: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка загрузки: ' + (err.response?.data?.message || err.message));
   } finally {
     uploading.value = false;
   }

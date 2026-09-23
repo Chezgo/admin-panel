@@ -3,7 +3,7 @@
     <div class="page-header">
       <h1>Характеристики деталей</h1>
       <router-link to="/attributes/new" class="btn btn-primary">
-        <span>+</span> Создать характеристику
+        <AppIconPlus class="ui-icon" /> Создать характеристику
       </router-link>
     </div>
 
@@ -12,11 +12,11 @@
       <input 
         v-model="searchQuery" 
         @keyup.enter="fetchAttributes"
-        placeholder="🔍 Поиск по ID или названию" 
+        placeholder="Поиск по ID или названию"
         class="search-input"
       >
-      <button @click="fetchAttributes" class="btn">Найти</button>
-      <button v-if="searchQuery" @click="resetSearch" class="btn btn-danger">Сбросить</button>
+      <button @click="fetchAttributes" class="btn"><AppIconSearch class="ui-icon" /> Найти</button>
+      <button v-if="searchQuery" @click="resetSearch" class="btn btn-danger"><AppIconReset class="ui-icon" /> Сбросить</button>
     </div>
 
     <!-- Состояния -->
@@ -26,8 +26,8 @@
     </div>
     
     <div v-else-if="error" class="error-state">
-      <p>⚠️ {{ error }}</p>
-      <button @click="fetchAttributes" class="btn">Повторить</button>
+      <p class="status-message"><AppIconAlert class="ui-icon" /> {{ error }}</p>
+      <button @click="fetchAttributes" class="btn"><AppIconRefresh class="ui-icon" /> Повторить</button>
     </div>
 
     <!-- Таблица -->
@@ -58,7 +58,7 @@
             </td>
             <td class="text-truncate">{{ attr.description }}</td>
             <td @click.stop>
-              <router-link :to="`/attributes/${attr.id}`" class="btn-icon" title="Открыть">👁️</router-link>
+              <router-link :to="`/attributes/${attr.id}`" class="btn-icon" title="Открыть"><AppIconEye class="ui-icon" /></router-link>
             </td>
           </tr>
           <tr v-if="filteredAttributes.length === 0">

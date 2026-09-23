@@ -3,7 +3,7 @@
     <div class="page-header">
       <h1>Детали телескопа</h1>
       <router-link to="/telescope-parts/new" class="btn btn-primary">
-        <span>+</span> Создать деталь
+        <AppIconPlus class="ui-icon" /> Создать деталь
       </router-link>
     </div>
 
@@ -12,11 +12,11 @@
       <input 
         v-model="searchQuery" 
         @keyup.enter="fetchParts"
-        placeholder="🔍 Поиск по ID или названию" 
+        placeholder="Поиск по ID или названию"
         class="search-input"
       >
-      <button @click="fetchParts" class="btn">Найти</button>
-      <button v-if="searchQuery" @click="resetSearch" class="btn btn-danger">Сбросить</button>
+      <button @click="fetchParts" class="btn"><AppIconSearch class="ui-icon" /> Найти</button>
+      <button v-if="searchQuery" @click="resetSearch" class="btn btn-danger"><AppIconReset class="ui-icon" /> Сбросить</button>
     </div>
 
     <!-- Пагинация и сортировка -->
@@ -32,9 +32,9 @@
       </div>
       
       <div class="page-control">
-        <button @click="prevPage" :disabled="currentPage === 0" class="btn-icon">←</button>
+        <button @click="prevPage" :disabled="currentPage === 0" class="btn-icon pagination-btn" title="Предыдущая страница"><AppIconChevronLeft class="ui-icon" /></button>
         <span class="page-info">Стр. {{ currentPage + 1 }} из {{ totalPages }}</span>
-        <button @click="nextPage" :disabled="currentPage >= totalPages - 1" class="btn-icon">→</button>
+        <button @click="nextPage" :disabled="currentPage >= totalPages - 1" class="btn-icon pagination-btn" title="Следующая страница"><AppIconChevronRight class="ui-icon" /></button>
       </div>
     </div>
 
@@ -45,8 +45,8 @@
     </div>
     
     <div v-else-if="error" class="error-state">
-      <p>⚠️ {{ error }}</p>
-      <button @click="fetchParts" class="btn">Повторить</button>
+      <p class="status-message"><AppIconAlert class="ui-icon" /> {{ error }}</p>
+      <button @click="fetchParts" class="btn"><AppIconRefresh class="ui-icon" /> Повторить</button>
     </div>
 
     <!-- Таблица -->
@@ -73,7 +73,7 @@
             <td><span class="badge">{{ part.idTypeDetail }}</span></td>
             <td><span class="badge">{{ part.idBrandDetail }}</span></td>
             <td @click.stop>
-              <router-link :to="`/telescope-parts/${part.id}`" class="btn-icon" title="Открыть">👁️</router-link>
+              <router-link :to="`/telescope-parts/${part.id}`" class="btn-icon" title="Открыть"><AppIconEye class="ui-icon" /></router-link>
             </td>
           </tr>
           <tr v-if="parts.length === 0">

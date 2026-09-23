@@ -2,12 +2,12 @@
   <div class="page">
     <div class="page-header">
       <div>
-        <button @click="$router.back()" class="btn btn-back">← Назад</button>
+        <button @click="$router.back()" class="btn btn-back"><AppIconArrowLeft class="ui-icon" /> Назад</button>
         <h1>{{ assembly?.name || 'Загрузка...' }}</h1>
       </div>
       <div v-if="assembly && !isNew" class="actions">
-        <button @click="handleEditAssembly" class="btn">✏️ Редактировать сборку</button>
-        <button @click="handleDeleteAssembly" class="btn btn-danger">🗑️ Удалить сборку</button>
+        <button @click="handleEditAssembly" class="btn"><AppIconPencil class="ui-icon" /> Редактировать сборку</button>
+        <button @click="handleDeleteAssembly" class="btn btn-danger"><AppIconTrash class="ui-icon" /> Удалить сборку</button>
       </div>
     </div>
 
@@ -18,8 +18,8 @@
     </div>
     
     <div v-else-if="error" class="error-state">
-      <p>⚠️ {{ error }}</p>
-      <button @click="fetchAssembly" class="btn">Повторить</button>
+      <p class="status-message"><AppIconAlert class="ui-icon" /> {{ error }}</p>
+      <button @click="fetchAssembly" class="btn"><AppIconRefresh class="ui-icon" /> Повторить</button>
     </div>
 
     <!-- Карточка сборки -->
@@ -50,8 +50,8 @@
     <!-- ===== ВЛОЖЕННЫЙ РАЗДЕЛ: Детали сборки ===== -->
     <div v-if="assembly && !isNew" class="section">
       <div class="section-header">
-        <h2>🔧 Детали в сборке</h2>
-        <button @click="openAddDetailModal" class="btn btn-primary">+ Добавить деталь</button>
+        <h2 class="icon-heading"><AppIconWrench class="ui-icon-lg" /> Детали в сборке</h2>
+        <button @click="openAddDetailModal" class="btn btn-primary"><AppIconPlus class="ui-icon" /> Добавить деталь</button>
       </div>
 
       <!-- Состояния для деталей -->
@@ -61,7 +61,7 @@
       </div>
       
       <div v-else-if="detailsError" class="error-state">
-        <p>⚠️ {{ detailsError }}</p>
+        <p class="status-message"><AppIconAlert class="ui-icon" /> {{ detailsError }}</p>
       </div>
 
       <!-- Таблица деталей -->
@@ -85,8 +85,8 @@
               </td>
               <td class="text-truncate">{{ detail.description || '—' }}</td>
               <td class="actions">
-                <button @click="openEditDetailModal(detail)" class="btn-icon" title="Редактировать">✏️</button>
-                <button @click="handleDeleteDetail(detail.id)" class="btn-icon danger" title="Удалить">🗑️</button>
+                <button @click="openEditDetailModal(detail)" class="btn-icon" title="Редактировать"><AppIconPencil class="ui-icon" /></button>
+                <button @click="handleDeleteDetail(detail.id)" class="btn-icon danger" title="Удалить"><AppIconTrash class="ui-icon" /></button>
               </td>
             </tr>
             <tr v-if="assemblyDetails.length === 0">
@@ -102,7 +102,7 @@
       <div class="modal">
         <div class="modal-header">
           <h2>Редактировать сборку</h2>
-          <button @click="closeEditAssemblyModal" class="close-btn">×</button>
+          <button @click="closeEditAssemblyModal" class="close-btn" title="Закрыть"><AppIconClose class="ui-icon" /></button>
         </div>
         
         <form @submit.prevent="submitEditAssembly" class="modal-body">
@@ -141,7 +141,7 @@
       <div class="modal">
         <div class="modal-header">
           <h2>{{ editingDetailId ? 'Редактировать' : 'Добавить' }} деталь</h2>
-          <button @click="closeDetailModal" class="close-btn">×</button>
+          <button @click="closeDetailModal" class="close-btn" title="Закрыть"><AppIconClose class="ui-icon" /></button>
         </div>
         
         <form @submit.prevent="submitDetail" class="modal-body">
@@ -324,9 +324,9 @@ const submitEditAssembly = async () => {
     await assembliesApi.update(assemblyId.value, editAssemblyForm.value);
     closeEditAssemblyModal();
     await fetchAssembly();
-    alert('✅ Сборка обновлена');
+    alert('Сборка обновлена');
   } catch (err) {
-    alert('❌ Ошибка: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка: ' + (err.response?.data?.message || err.message));
   } finally {
     submitting.value = false;
   }
@@ -338,7 +338,7 @@ const submitCreateAssembly = async () => {
     const res = await assembliesApi.create(createAssemblyForm.value);
     router.replace(`/assemblies/${res.data.id}`);
   } catch (err) {
-    alert('❌ Ошибка создания: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка создания: ' + (err.response?.data?.message || err.message));
   } finally {
     submitting.value = false;
   }
@@ -351,7 +351,7 @@ const handleDeleteAssembly = async () => {
     await assembliesApi.delete(assemblyId.value);
     router.replace('/assemblies');
   } catch (err) {
-    alert('❌ Ошибка удаления: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка удаления: ' + (err.response?.data?.message || err.message));
   }
 };
 
@@ -395,10 +395,10 @@ const submitDetail = async () => {
     
     closeDetailModal();
     await fetchAssemblyDetails(); // Перезагружаем список деталей
-    alert('✅ Деталь сохранена');
+    alert('Деталь сохранена');
     
   } catch (err) {
-    alert('❌ Ошибка: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка: ' + (err.response?.data?.message || err.message));
   } finally {
     submittingDetail.value = false;
   }
@@ -411,7 +411,7 @@ const handleDeleteDetail = async (detailId) => {
     await assembliesApi.deleteAssemblyDetail(detailId);
     await fetchAssemblyDetails();
   } catch (err) {
-    alert('❌ Ошибка удаления: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка удаления: ' + (err.response?.data?.message || err.message));
   }
 };
 

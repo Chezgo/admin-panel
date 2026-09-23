@@ -3,7 +3,7 @@
     <div class="footer-content">
       <div class="footer-left">
         <div class="footer-logo">
-          <span class="footer-logo-icon">🔭</span>
+          <Telescope class="footer-logo-icon" aria-hidden="true" />
           <span class="footer-logo-text">Астрофото Админ</span>
         </div>
         <div class="footer-copyright">
@@ -21,6 +21,10 @@
     </div>
   </footer>
 </template>
+
+<script setup>
+import { Telescope } from 'lucide-vue-next';
+</script>
 
 <style scoped>
 .app-footer {
@@ -54,7 +58,9 @@
 }
 
 .footer-logo-icon {
-  font-size: 1.2rem;
+  width: 20px;
+  height: 20px;
+  color: #60a5fa;
 }
 
 .footer-logo-text {
@@ -90,6 +96,10 @@
 }
 
 @media (max-width: 768px) {
+  .app-footer {
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+  }
+
   .footer-content {
     flex-direction: column;
     text-align: center;
