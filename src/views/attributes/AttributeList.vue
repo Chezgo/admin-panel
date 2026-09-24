@@ -37,7 +37,6 @@
           <tr>
             <th width="60">ID</th>
             <th>Название</th>
-            <th width="180">Тип детали</th>
             <th>Описание</th>
             <th width="120">Действия</th>
           </tr>
@@ -51,18 +50,13 @@
           >
             <td>#{{ attr.id }}</td>
             <td class="fw-medium">{{ attr.name }}</td>
-            <td>
-              <span class="badge" :title="getTypeName(attr.idTypeDetail)">
-                #{{ attr.idTypeDetail }} {{ getTypeShortName(attr.idTypeDetail) }}
-              </span>
-            </td>
             <td class="text-truncate">{{ attr.description }}</td>
             <td @click.stop>
               <router-link :to="`/attributes/${attr.id}`" class="btn-icon" title="Открыть"><AppIconEye class="ui-icon" /></router-link>
             </td>
           </tr>
           <tr v-if="filteredAttributes.length === 0">
-            <td colspan="5" class="empty-state">
+            <td colspan="4" class="empty-state">
               {{ searchQuery ? 'Ничего не найдено' : 'Нет данных' }}
             </td>
           </tr>
@@ -79,32 +73,9 @@ import attributesApi from '@/services/attributes';
 
 const router = useRouter();
 const attributes = ref([]);
-const typesMap = ref({}); // 🔗 Кэш типов: { id: { name, description } }
 const loading = ref(false);
 const error = ref(null);
 const searchQuery = ref('');
-
-// Загрузка типов для отображения названий
-const loadTypes = async () => {
-  try {
-    const res = await attributesApi.getTypes();
-    const types = Array.isArray(res.data) ? res.data : (res.data.content || []);
-    // Создаём карту для быстрого доступа: id → тип
-    typesMap.value = types.reduce((acc, t) => {
-      acc[t.id] = t;
-      return acc;
-    }, {});
-  } catch (err) {
-    console.warn('⚠️ Не удалось загрузить типы:', err);
-  }
-};
-
-// Получение названия типа по ID
-const getTypeName = (id) => typesMap.value[id]?.name || `Тип #${id}`;
-const getTypeShortName = (id) => {
-  const name = typesMap.value[id]?.name || '';
-  return name.length > 20 ? name.slice(0, 20) + '…' : name;
-};
 
 // Фильтрация локально (по ID или названию)
 const filteredAttributes = computed(() => {
@@ -133,9 +104,7 @@ const fetchAttributes = async () => {
 const resetSearch = () => { searchQuery.value = ''; };
 const goToDetail = (id) => { router.push(`/attributes/${id}`); };
 
-onMounted(async () => {
-  await Promise.all([loadTypes(), fetchAttributes()]);
-});
+onMounted(fetchAttributes);
 </script>
 
 <style scoped>

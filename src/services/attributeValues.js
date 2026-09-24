@@ -36,7 +36,7 @@ api.interceptors.response.use(
 export default {
   // ===== ЗНАЧЕНИЯ АТРИБУТОВ =====
   // 📄 Получить все значения атрибутов для детали
-  getByDetailId: (detailId) => api.get(`/detail-attribute-value/${detailId}/attribute-values`),
+  getByDetailId: (detailId) => api.get(`/detail-attribute-value/by-detail/${detailId}`),
   
   // ➕ Создать значение атрибута
   create: (data) => api.post('/detail-attribute-value', data),

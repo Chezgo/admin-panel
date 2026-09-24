@@ -70,8 +70,8 @@
           >
             <td>#{{ part.id }}</td>
             <td class="fw-medium">{{ part.name }}</td>
-            <td><span class="badge">{{ part.idTypeDetail }}</span></td>
-            <td><span class="badge">{{ part.idBrandDetail }}</span></td>
+            <td><span class="badge">{{ getTypeName(part.idTypeDetail) }}</span></td>
+            <td><span class="badge">{{ getBrandName(part.idBrandDetail) }}</span></td>
             <td @click.stop>
               <router-link :to="`/telescope-parts/${part.id}`" class="btn-icon" title="Открыть"><AppIconEye class="ui-icon" /></router-link>
             </td>
@@ -91,12 +91,16 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import telescopePartsApi from '@/services/telescopeParts';
+import detailTypesApi from '@/services/detailTypes';
+import brandsApi from '@/services/brands';
 
 const router = useRouter();
 const parts = ref([]);
 const loading = ref(false);
 const error = ref(null);
 const searchQuery = ref('');
+const typesMap = ref({});
+const brandsMap = ref({});
 
 // Пагинация
 const currentPage = ref(0);
@@ -106,6 +110,23 @@ const pageSize = ref(10);
 
 // Сортировка
 const sortBy = ref('name,asc');
+
+const toMap = (items) => items.reduce((map, item) => {
+  map[item.id] = item.name;
+  return map;
+}, {});
+
+const getTypeName = (id) => typesMap.value[id] || `Тип #${id}`;
+const getBrandName = (id) => brandsMap.value[id] || `Бренд #${id}`;
+
+const loadDictionaries = async () => {
+  const [typesRes, brandsRes] = await Promise.all([
+    detailTypesApi.getAll(),
+    brandsApi.getAll()
+  ]);
+  typesMap.value = toMap(Array.isArray(typesRes.data) ? typesRes.data : []);
+  brandsMap.value = toMap(Array.isArray(brandsRes.data) ? brandsRes.data : []);
+};
 
 const fetchParts = async () => {
   loading.value = true;
@@ -131,7 +152,9 @@ const fetchParts = async () => {
       const query = searchQuery.value.toLowerCase();
       data = data.filter(p => 
         p.id.toString().includes(query) || 
-        p.name.toLowerCase().includes(query)
+        p.name.toLowerCase().includes(query) ||
+        getTypeName(p.idTypeDetail).toLowerCase().includes(query) ||
+        getBrandName(p.idBrandDetail).toLowerCase().includes(query)
       );
     }
     
@@ -170,7 +193,18 @@ const goToDetail = (id) => {
   router.push(`/telescope-parts/${id}`);
 };
 
-onMounted(fetchParts);
+onMounted(async () => {
+  loading.value = true;
+  error.value = null;
+  try {
+    await loadDictionaries();
+    await fetchParts();
+  } catch (err) {
+    error.value = err.response?.data?.errorMessage?.message || 'Не удалось загрузить справочники типов и брендов';
+    loading.value = false;
+    console.error(err);
+  }
+});
 </script>
 
 <style scoped>

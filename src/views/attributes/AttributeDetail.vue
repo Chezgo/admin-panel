@@ -34,13 +34,6 @@
         <span class="value">{{ attribute.name }}</span>
       </div>
       
-      <div class="detail-row">
-        <label>Тип детали</label>
-        <span class="value badge">
-          #{{ attribute.idTypeDetail }} {{ getTypeName(attribute.idTypeDetail) }}
-        </span>
-      </div>
-      
       <div class="detail-row full">
         <label>Описание</label>
         <p class="description">{{ attribute.description }}</p>
@@ -58,22 +51,12 @@
         <form @submit.prevent="submitEdit" class="modal-body">
           <div class="form-group">
             <label>Название *</label>
-            <input v-model="editForm.name" required placeholder="Например: Апертура, мм">
+            <input v-model.trim="editForm.name" required minlength="3" maxlength="50" placeholder="Например: Апертура">
           </div>
 
           <div class="form-group">
-            <label>Тип детали *</label>
-            <select v-model.number="editForm.idTypeDetail" required class="form-select">
-              <option value="" disabled>Выберите тип...</option>
-              <option v-for="type in types" :key="type.id" :value="type.id">
-                #{{ type.id }} — {{ type.name }}
-              </option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>Описание</label>
-            <textarea v-model="editForm.description" rows="3" placeholder="Краткое описание..."></textarea>
+            <label>Описание *</label>
+            <textarea v-model="editForm.description" required minlength="3" maxlength="255" rows="3" placeholder="Краткое описание..."></textarea>
           </div>
 
           <div class="modal-footer">
@@ -92,22 +75,12 @@
       <form @submit.prevent="submitCreate" class="form">
         <div class="form-group">
           <label>Название *</label>
-          <input v-model="createForm.name" required placeholder="Например: Фокусное расстояние, мм">
+          <input v-model.trim="createForm.name" required minlength="3" maxlength="50" placeholder="Например: Фокусное расстояние">
         </div>
 
         <div class="form-group">
-          <label>Тип детали *</label>
-          <select v-model.number="createForm.idTypeDetail" required class="form-select">
-            <option value="" disabled>Выберите тип...</option>
-            <option v-for="type in types" :key="type.id" :value="type.id">
-              #{{ type.id }} — {{ type.name }}
-            </option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Описание</label>
-          <textarea v-model="createForm.description" rows="3" placeholder="Краткое описание..."></textarea>
+          <label>Описание *</label>
+          <textarea v-model="createForm.description" required minlength="3" maxlength="255" rows="3" placeholder="Краткое описание..."></textarea>
         </div>
 
         <div class="form-actions">
@@ -130,34 +103,16 @@ const route = useRoute();
 const router = useRouter();
 
 const attribute = ref(null);
-const types = ref([]);
 const loading = ref(false);
 const error = ref(null);
 const showEditModal = ref(false);
 const submitting = ref(false);
 
-const editForm = ref({ name: '', idTypeDetail: null, description: '' });
-const createForm = ref({ name: '', idTypeDetail: null, description: '' });
+const editForm = ref({ name: '', description: '' });
+const createForm = ref({ name: '', description: '' });
 
 const isNew = computed(() => route.params.id === 'new');
 const attributeId = computed(() => isNew.value ? null : parseInt(route.params.id, 10));
-
-// Загрузка типов для выпадающего списка
-const loadTypes = async () => {
-  try {
-    const res = await attributesApi.getTypes();
-    types.value = Array.isArray(res.data) ? res.data : (res.data.content || []);
-  } catch (err) {
-    console.error('❌ Failed to load types:', err);
-    error.value = 'Не удалось загрузить список типов';
-  }
-};
-
-// Получение названия типа по ID
-const getTypeName = (id) => {
-  const type = types.value.find(t => t.id === id);
-  return type?.name || `Тип #${id}`;
-};
 
 const fetchAttribute = async () => {
   if (isNew.value) return;
@@ -178,7 +133,6 @@ const fetchAttribute = async () => {
 const handleEdit = () => {
   editForm.value = { 
     name: attribute.value.name,
-    idTypeDetail: attribute.value.idTypeDetail,
     description: attribute.value.description 
   };
   showEditModal.value = true;
@@ -204,7 +158,8 @@ const submitCreate = async () => {
   submitting.value = true;
   try {
     const res = await attributesApi.create(createForm.value);
-    router.replace(`/attributes/${res.data.id}`);
+    await router.replace(`/attributes/${res.data.id}`);
+    await fetchAttribute();
   } catch (err) {
     alert('Ошибка создания: ' + (err.response?.data?.message || err.message));
   } finally {
@@ -223,12 +178,7 @@ const handleDelete = async () => {
   }
 };
 
-onMounted(async () => {
-  await loadTypes();
-  if (!isNew.value) {
-    await fetchAttribute();
-  }
-});
+onMounted(fetchAttribute);
 </script>
 
 <style scoped>

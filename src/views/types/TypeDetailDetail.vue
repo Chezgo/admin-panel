@@ -33,6 +33,11 @@
         <label>Название</label>
         <span class="value">{{ typeDetail.name }}</span>
       </div>
+
+      <div class="detail-row">
+        <label>Функциональная группа</label>
+        <span class="value">{{ typeDetail.functionalGroup }}</span>
+      </div>
       
       <div class="detail-row full">
         <label>Описание</label>
@@ -51,12 +56,17 @@
         <form @submit.prevent="submitEdit" class="modal-body">
           <div class="form-group">
             <label>Название *</label>
-            <input v-model="editForm.name" required>
+            <input v-model.trim="editForm.name" required maxlength="50">
           </div>
 
           <div class="form-group">
-            <label>Описание</label>
-            <textarea v-model="editForm.description" rows="4"></textarea>
+            <label>Функциональная группа *</label>
+            <input v-model.trim="editForm.functionalGroup" required maxlength="50">
+          </div>
+
+          <div class="form-group">
+            <label>Описание *</label>
+            <textarea v-model="editForm.description" required maxlength="255" rows="4"></textarea>
           </div>
 
           <div class="modal-footer">
@@ -75,12 +85,17 @@
       <form @submit.prevent="submitCreate" class="form">
         <div class="form-group">
           <label>Название *</label>
-          <input v-model="createForm.name" required placeholder="Например: Окуляр">
+          <input v-model.trim="createForm.name" required maxlength="50" placeholder="Например: Окуляр">
         </div>
 
         <div class="form-group">
-          <label>Описание</label>
-          <textarea v-model="createForm.description" rows="4" placeholder="Краткое описание..."></textarea>
+          <label>Функциональная группа *</label>
+          <input v-model.trim="createForm.functionalGroup" required maxlength="50" placeholder="Например: Окуляры и визуальные аксессуары">
+        </div>
+
+        <div class="form-group">
+          <label>Описание *</label>
+          <textarea v-model="createForm.description" required maxlength="255" rows="4" placeholder="Краткое описание..."></textarea>
         </div>
 
         <div class="form-actions">
@@ -108,8 +123,8 @@ const error = ref(null);
 const showEditModal = ref(false);
 const submitting = ref(false);
 
-const editForm = ref({ name: '', description: '' });
-const createForm = ref({ name: '', description: '' });
+const editForm = ref({ name: '', description: '', functionalGroup: '' });
+const createForm = ref({ name: '', description: '', functionalGroup: '' });
 
 const isNew = computed(() => route.params.id === 'new');
 const typeId = computed(() => isNew.value ? null : parseInt(route.params.id, 10));
@@ -131,7 +146,11 @@ const fetchType = async () => {
 };
 
 const handleEdit = () => {
-  editForm.value = { ...typeDetail.value };
+  editForm.value = {
+    name: typeDetail.value.name,
+    description: typeDetail.value.description,
+    functionalGroup: typeDetail.value.functionalGroup
+  };
   showEditModal.value = true;
 };
 
@@ -155,7 +174,8 @@ const submitCreate = async () => {
   submitting.value = true;
   try {
     const res = await detailTypesApi.create(createForm.value);
-    router.replace(`/types/${res.data.id}`);
+    await router.replace(`/types/${res.data.id}`);
+    await fetchType();
   } catch (err) {
     alert('Ошибка создания: ' + (err.response?.data?.message || err.message));
   } finally {

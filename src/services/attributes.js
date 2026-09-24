@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { useAuthStore } from '@/stores/auth';
-import detailTypesApi from '@/services/detailTypes'; // 🔗 Импортируем сервис типов
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL + '/v1',
@@ -37,6 +36,4 @@ export default {
   create: (data) => api.post('/detail-attribute', data),
   update: (id, data) => api.put(`/detail-attribute/${id}`, data),
   delete: (id) => api.delete(`/detail-attribute/${id}`),
-  
-  getTypes: () => detailTypesApi.getAll(),
 };

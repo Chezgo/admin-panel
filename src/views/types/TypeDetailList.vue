@@ -34,6 +34,7 @@
           <tr>
             <th width="60">ID</th>
             <th>Название</th>
+            <th>Функциональная группа</th>
             <th>Описание</th>
             <th width="120">Действия</th>
           </tr>
@@ -47,13 +48,14 @@
           >
             <td>#{{ type.id }}</td>
             <td class="fw-medium">{{ type.name }}</td>
+            <td class="text-truncate">{{ type.functionalGroup }}</td>
             <td class="text-truncate">{{ type.description }}</td>
             <td @click.stop>
               <router-link :to="`/types/${type.id}`" class="btn-icon" title="Открыть"><AppIconEye class="ui-icon" /></router-link>
             </td>
           </tr>
           <tr v-if="filteredTypes.length === 0">
-            <td colspan="4" class="empty-state">
+            <td colspan="5" class="empty-state">
               {{ searchId ? 'Ничего не найдено' : 'Нет данных' }}
             </td>
           </tr>

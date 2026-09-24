@@ -35,13 +35,13 @@
       </div>
       
       <div class="detail-row">
-        <label>ID типа</label>
-        <span class="value badge">{{ part.idTypeDetail }}</span>
+        <label>Тип</label>
+        <span class="value badge">{{ getTypeName(part.idTypeDetail) }}</span>
       </div>
       
       <div class="detail-row">
-        <label>ID бренда</label>
-        <span class="value badge">{{ part.idBrandDetail }}</span>
+        <label>Бренд</label>
+        <span class="value badge">{{ getBrandName(part.idBrandDetail) }}</span>
       </div>
       
       <div class="detail-row full">
@@ -87,7 +87,12 @@
     {{ getAttributeName(attr) }}
   </span>
 </td>
-              <td class="value-cell">{{ attr.value }}</td>
+              <td class="value-cell">
+                {{ attr.value }}<span v-if="attr.unit"> {{ attr.unit }}</span>
+                <small v-if="attr.valueNumeric !== null && attr.valueNumeric !== undefined" class="numeric-value">
+                  Числовое значение: {{ attr.valueNumeric }}
+                </small>
+              </td>
               <td class="text-truncate">{{ attr.description || '—' }}</td>
               <td class="actions">
                 <button @click="openEditAttributeModal(attr)" class="btn-icon" title="Редактировать"><AppIconPencil class="ui-icon" /></button>
@@ -113,7 +118,7 @@
         <form @submit.prevent="submitEdit" class="modal-body">
           <div class="form-group">
             <label>Название *</label>
-            <input v-model="editForm.name" required>
+            <input v-model.trim="editForm.name" required minlength="3" maxlength="50">
           </div>
           
           <div class="form-row">
@@ -139,8 +144,8 @@
 </div>
 
           <div class="form-group">
-            <label>Описание</label>
-            <textarea v-model="editForm.description" rows="3"></textarea>
+            <label>Описание *</label>
+            <textarea v-model="editForm.description" required minlength="3" maxlength="255" rows="3"></textarea>
           </div>
 
           <div class="modal-footer">
@@ -166,21 +171,32 @@
             <label>Атрибут *</label>
             <select v-model.number="attributeForm.idDetailAttribute" required class="form-select">
               <option value="" disabled>Выберите атрибут...</option>
-              <option v-for="attr in availableAttributes" :key="attr.id" :value="attr.id">
+              <option v-for="attr in selectableAttributes" :key="attr.id" :value="attr.id">
                 #{{ attr.id }} — {{ attr.name }}
               </option>
             </select>
-            <small class="hint" v-if="editingAttributeId">Нельзя изменить атрибут после создания</small>
           </div>
 
           <div class="form-group">
             <label>Значение *</label>
-            <input v-model="attributeForm.value" required placeholder="Например: 130">
+            <input v-model.trim="attributeForm.value" required maxlength="50" placeholder="Например: 130">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Числовое значение</label>
+              <input v-model.number="attributeForm.numericValue" type="number" step="any" placeholder="Например: 130">
+            </div>
+
+            <div class="form-group">
+              <label>Единица измерения</label>
+              <input v-model.trim="attributeForm.unit" maxlength="20" placeholder="Например: мм">
+            </div>
           </div>
 
           <div class="form-group">
             <label>Описание</label>
-            <textarea v-model="attributeForm.description" rows="2" placeholder="Примечание..."></textarea>
+            <textarea v-model="attributeForm.description" maxlength="255" rows="2" placeholder="Примечание..."></textarea>
           </div>
 
           <div class="modal-footer">
@@ -199,7 +215,7 @@
       <form @submit.prevent="submitCreate" class="form">
         <div class="form-group">
           <label>Название *</label>
-          <input v-model="createForm.name" required placeholder="Например: Skyline BASE 100S">
+          <input v-model.trim="createForm.name" required minlength="3" maxlength="50" placeholder="Например: Skyline BASE 100S">
         </div>
         
         <div class="form-row">
@@ -225,8 +241,8 @@
 </div>
 
         <div class="form-group">
-          <label>Описание</label>
-          <textarea v-model="createForm.description" rows="3" placeholder="Краткое описание..."></textarea>
+          <label>Описание *</label>
+          <textarea v-model="createForm.description" required minlength="3" maxlength="255" rows="3" placeholder="Краткое описание..."></textarea>
         </div>
 
         <div class="form-actions">
@@ -277,11 +293,33 @@ const submittingAttribute = ref(false);
 const attributeForm = ref({ 
   idDetailAttribute: null, 
   value: '', 
+  numericValue: null,
+  unit: '',
   description: '' 
 });
 
 const isNew = computed(() => route.params.id === 'new');
 const partId = computed(() => isNew.value ? null : parseInt(route.params.id, 10));
+const selectableAttributes = computed(() => {
+  const assignedIds = new Set(
+    attributeValues.value
+      .filter(value => value.id !== editingAttributeId.value)
+      .map(value => value.idDetailAttribute)
+  );
+  return availableAttributes.value.filter(attribute => !assignedIds.has(attribute.id));
+});
+
+const getTypeName = (id) => types.value.find(type => type.id === id)?.name || `Тип #${id}`;
+const getBrandName = (id) => brands.value.find(brand => brand.id === id)?.name || `Бренд #${id}`;
+
+const getErrorMessage = (err, fallback) => {
+  const body = err.response?.data;
+  if (body?.errorMessage && typeof body.errorMessage === 'object') {
+    const messages = Object.values(body.errorMessage).filter(Boolean);
+    if (messages.length) return messages.join('. ');
+  }
+  return body?.errorMessage || body?.message || body?.error || fallback;
+};
 
 // ===== Загрузка справочника атрибутов =====
 const loadAvailableAttributes = async () => {
@@ -295,12 +333,9 @@ const loadAvailableAttributes = async () => {
 };
 
 const getAttributeName = (attr) => {
-  return attr.attributeName || `Атрибут #${attr.idDetailAttribute}`;
-};
-
-const getAttributeShortName = (attr) => {
-  const name = getAttributeName(attr);
-  return name.length > 25 ? name.slice(0, 25) + '…' : name;
+  return attr.attributeName
+    || availableAttributes.value.find(item => item.id === attr.idDetailAttribute)?.name
+    || `Атрибут #${attr.idDetailAttribute}`;
 };
 
 // ===== CRUD детали =====
@@ -313,7 +348,7 @@ const fetchPart = async () => {
     const res = await telescopePartsApi.getById(partId.value);
     part.value = res.data;
   } catch (err) {
-    error.value = err.response?.data?.message || 'Не удалось загрузить деталь';
+    error.value = getErrorMessage(err, 'Не удалось загрузить деталь');
     console.error(err);
   } finally {
     loading.value = false;
@@ -330,7 +365,7 @@ const fetchAttributeValues = async () => {
     const res = await attributeValuesApi.getByDetailId(partId.value);
     attributeValues.value = Array.isArray(res.data) ? res.data : [];
   } catch (err) {
-    attributesError.value = err.response?.data?.message || 'Не удалось загрузить характеристики';
+    attributesError.value = getErrorMessage(err, 'Не удалось загрузить характеристики');
     console.error(err);
   } finally {
     attributesLoading.value = false;
@@ -358,7 +393,7 @@ const submitEdit = async () => {
     await fetchPart();
     alert('Деталь обновлена');
   } catch (err) {
-    alert('Ошибка: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка: ' + getErrorMessage(err, err.message));
   } finally {
     submitting.value = false;
   }
@@ -368,9 +403,10 @@ const submitCreate = async () => {
   submitting.value = true;
   try {
     const res = await telescopePartsApi.create(createForm.value);
-    router.replace(`/telescope-parts/${res.data.id}`);
+    await router.replace(`/telescope-parts/${res.data.id}`);
+    await Promise.all([fetchPart(), fetchAttributeValues()]);
   } catch (err) {
-    alert('Ошибка создания: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка создания: ' + getErrorMessage(err, err.message));
   } finally {
     submitting.value = false;
   }
@@ -383,7 +419,7 @@ const handleDelete = async () => {
     await telescopePartsApi.delete(partId.value);
     router.replace('/telescope-parts');
   } catch (err) {
-    alert('Ошибка удаления: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка удаления: ' + getErrorMessage(err, err.message));
   }
 };
 
@@ -393,7 +429,13 @@ const openAddAttributeModal = async () => {
     await loadAvailableAttributes();
   }
   editingAttributeId.value = null;
-  attributeForm.value = { idDetailAttribute: null, value: '', description: '' };
+  attributeForm.value = {
+    idDetailAttribute: null,
+    value: '',
+    numericValue: null,
+    unit: '',
+    description: ''
+  };
   showAttributeModal.value = true;
 };
 
@@ -402,6 +444,8 @@ const openEditAttributeModal = (attr) => {
   attributeForm.value = { 
     idDetailAttribute: attr.idDetailAttribute,  // readOnly в режиме редактирования
     value: attr.value,
+    numericValue: attr.valueNumeric ?? null,
+    unit: attr.unit || '',
     description: attr.description 
   };
   showAttributeModal.value = true;
@@ -419,15 +463,13 @@ const submitAttribute = async () => {
       idDetail: partId.value,
       idDetailAttribute: attributeForm.value.idDetailAttribute,
       value: attributeForm.value.value,
+      numericValue: attributeForm.value.numericValue === '' ? null : attributeForm.value.numericValue,
+      unit: attributeForm.value.unit || null,
       description: attributeForm.value.description
     };
 
     if (editingAttributeId.value) {
-      // Обновление: нельзя менять idDetailAttribute, только value и description
-      await attributeValuesApi.update(editingAttributeId.value, {
-        ...payload,
-        idDetailAttribute: attributeValues.value.find(a => a.id === editingAttributeId.value)?.idDetailAttribute
-      });
+      await attributeValuesApi.update(editingAttributeId.value, payload);
     } else {
       // Создание новой связи
       await attributeValuesApi.create(payload);
@@ -438,7 +480,7 @@ const submitAttribute = async () => {
     alert('Характеристика сохранена');
     
   } catch (err) {
-    alert('Ошибка: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка: ' + getErrorMessage(err, err.message));
   } finally {
     submittingAttribute.value = false;
   }
@@ -451,7 +493,7 @@ const handleDeleteAttribute = async (attrId) => {
     await attributeValuesApi.delete(attrId);
     await fetchAttributeValues();
   } catch (err) {
-    alert('Ошибка удаления: ' + (err.response?.data?.message || err.message));
+    alert('Ошибка удаления: ' + getErrorMessage(err, err.message));
   }
 };
 
@@ -485,6 +527,7 @@ onMounted(async () => {
       fetchPart(),
       loadTypes(),
       loadBrands(),
+      loadAvailableAttributes(),
       fetchAttributeValues()
     ]);
   }
@@ -564,6 +607,9 @@ onMounted(async () => {
 }
 .data-table .value-cell {
   font-weight: 600; color: #60a5fa; font-family: monospace;
+}
+.numeric-value {
+  display: block; margin-top: 0.25rem; color: #94a3b8; font-family: inherit; font-weight: 400;
 }
 
 .text-truncate {
